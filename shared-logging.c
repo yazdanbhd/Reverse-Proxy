@@ -69,15 +69,18 @@ int read_logs(log_entry_t *output_logs, int max_logs) {
   }
 
   pthread_mutex_lock(&log_buffer->mutex);
-  int start_index = log_buffer->next_write_index; // bug: incorrect calculation
-  int count = 0;
 
-  for (int i = start_index; i < log_buffer->total_logs; i++) {
-    if (count >= max_logs)
-      break;
-    output_logs[count++] = log_buffer->logs[i];
+  int logs_to_read =
+      log_buffer->total_logs < max_logs ? log_buffer->total_logs : max_logs;
+  int start_index =
+      (log_buffer->next_write_index - log_buffer->total_logs + MAX_LOGS) %
+      MAX_LOGS;
+
+  for (int i = 0; i < logs_to_read; i++) {
+    int index = (start_index + i) % MAX_LOGS;
+    output_logs[i] = log_buffer->logs[index];
   }
 
   pthread_mutex_unlock(&log_buffer->mutex);
-  return count;
+  return logs_to_read;
 }
