@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef CONFIG_PROXY_H
+#define CONFIG_PROXY_H
 
 #include <netinet/in.h>
 
@@ -15,4 +15,4 @@ typedef struct {
 
 void parse_arguments(int argc, char *argv[], proxy_config_t *config);
 
-#endif // CONFIG_H
+#endif // CONFIG_PROXY_H

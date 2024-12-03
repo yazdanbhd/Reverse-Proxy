@@ -1,12 +1,11 @@
-#include "config-proxy.h"
-#include <stdio.h>
-
-proxy_config_t config_global;
+#include "shared-logging.h"
 
 int main(int argc, char *argv[]) {
-  parse_arguments(argc, argv, &config_global);
-  printf("Inbound: %s:%d, Outbound: %s:%d\n", config_global.inbound_ip,
-         config_global.inbound_port, config_global.outbound_host,
-         config_global.outbound_port);
+  init_shared_log_buffer();
+  add_log_entry("127.0.0.1", "Test Log Entry");
+  log_entry_t logs[MAX_LOGS];
+  int count = read_logs(logs, MAX_LOGS);
+  printf("Read %d logs\n", count);
+
   return 0;
 }
