@@ -11,7 +11,36 @@
 shared_log_buffer_t *log_buffer = NULL;
 
 int init_shared_log_buffer() {
-  // TODO: implement
+  int shm_fd = shm_open(SHARED_LOG_NAME, O_CREAT | O_RDWR, 0666);
+  if (shm_fd == -1) {
+    perror("shm_open failed");
+    return -1;
+  }
+
+  if (ftruncate(shm_fd, sizeof(shared_log_buffer_t)) == -1) {
+    perror("ftruncate failed");
+    close(shm_fd);
+    return -1;
+  }
+
+  log_buffer = mmap(NULL, sizeof(shared_log_buffer_t), PROT_READ | PROT_WRITE,
+                    MAP_SHARED, shm_fd, 0);
+  if (log_buffer == MAP_FAILED) {
+    perror("mmap failed");
+    close(shm_fd);
+    return -1;
+  }
+
+  pthread_mutexattr_t attr;
+  pthread_mutexattr_init(&attr);
+  pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+  pthread_mutex_init(&log_buffer->mutex, &attr);
+  pthread_mutexattr_destroy(&attr);
+
+  log_buffer->next_write_index = 0;
+  log_buffer->total_logs = 0;
+
+  close(shm_fd);
   return 0;
 }
 
