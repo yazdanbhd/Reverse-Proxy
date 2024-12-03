@@ -1,4 +1,4 @@
-#include "config.h"
+#include "config-proxy.h"
 #include <stdio.h>
 
 proxy_config_t config_global;

@@ -1,4 +1,4 @@
-#include "config.h"
+#include "config-proxy.h"
 #include <getopt.h>
 #include <netinet/in.h>
 #include <stdio.h>
