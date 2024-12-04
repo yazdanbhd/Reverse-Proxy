@@ -22,13 +22,15 @@ char *generate_log_collection_response(int *response_length) {
     return strdup("No logs available\n");
   }
 
-  size_t total_size;
-  char **formatted_logs = malloc(num_logs * 2);
+  // estimate total buffer size
+  size_t total_size = 0;
+  char **formatted_logs = malloc(num_logs * sizeof(char *));
   if (!formatted_logs) {
     *response_length = 0;
     return NULL;
   }
 
+  // format each log entry
   for (int i = 0; i < num_logs; i++) {
     formatted_logs[i] = format_log_entry(&logs[i]);
     if (formatted_logs[i]) {
@@ -36,8 +38,10 @@ char *generate_log_collection_response(int *response_length) {
     }
   }
 
-  char *response;
+  // allocate response buffer
+  char *response = malloc(total_size + 1);
   if (!response) {
+    // cleanup
     for (int i = 0; i < num_logs; i++) {
       free(formatted_logs[i]);
     }
@@ -46,6 +50,7 @@ char *generate_log_collection_response(int *response_length) {
     return NULL;
   }
 
+  // concatenate log entries
   response[0] = '\0';
   for (int i = 0; i < num_logs; i++) {
     if (formatted_logs[i]) {
@@ -53,6 +58,7 @@ char *generate_log_collection_response(int *response_length) {
       free(formatted_logs[i]);
     }
   }
+  free(formatted_logs);
 
   *response_length = total_size;
   return response;
