@@ -41,7 +41,22 @@ int create_listening_socket(const char *ip, int port) {
   return listen_fd;
 }
 
-void fork_workers() { printf("tets worker.\n"); }
+void fork_workers() {
+  for (int i = 0; i < NUM_WORKERS; i++) {
+    pid_t pid = fork();
+    if (pid == 0) {
+      printf("Worker process forked (PID: %d).\n", getpid());
+      // TODO: Worker logic
+      exit(0);
+    } else if (pid > 0) {
+      workers[i] = pid;
+      printf("Forked worker %d with PID %d\n", i, pid);
+    } else {
+      perror("Fork failed");
+      exit(1);
+    }
+  }
+}
 
 int main(int argc, char *argv[]) {
   printf("master process.\n");
