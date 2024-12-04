@@ -7,8 +7,38 @@ proxy_config_t config_global;
 void handle_sigchld(int sig) { printf("SIGCHLD received. \n"); }
 
 int create_listening_socket(const char *ip, int port) {
-  printf("test listening socket.\n");
-  return -1;
+  int listen_fd;
+  struct sockaddr_in addr;
+  int opt = 1;
+
+  if ((listen_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    perror("Socket creation failed");
+    return -1;
+  }
+
+  if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+    perror("setsockopt failed");
+    return -1;
+  }
+
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  if (inet_pton(AF_INET, ip, &addr.sin_addr) <= 0) {
+    perror("Invalid IP address");
+    return -1;
+  }
+
+  if (bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    perror("Bind failed");
+    return -1;
+  }
+
+  if (listen(listen_fd, SOMAXCONN) < 0) {
+    perror("Listen failed");
+    return -1;
+  }
+
+  return listen_fd;
 }
 
 void fork_workers() { printf("tets worker.\n"); }
