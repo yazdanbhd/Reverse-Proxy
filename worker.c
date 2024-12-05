@@ -26,3 +26,20 @@ int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
   printf("Worker process (PID: %d) started on CPU %d\n", getpid(), cpu_id);
   return 0;
 }
+
+void handle_client(int client_fd, const proxy_config_t *config) {
+  char buffer[BUFFER_SIZE];
+  int bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+
+  if (bytes_read <= 0) {
+    perror("Failed to read from client");
+    close(client_fd);
+    return;
+  }
+
+  buffer[bytes_read] = '\0';
+  printf("Worker %d received: %s\n", getpid(), buffer);
+
+  send(client_fd, buffer, bytes_read, 0);
+  close(client_fd);
+}

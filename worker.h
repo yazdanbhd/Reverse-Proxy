@@ -21,7 +21,11 @@
 #define BUFFER_SIZE 4096
 
 void set_cpu_affinity(int cpu_id);
+
 int set_nonblocking(int fd);
+
+void handle_client(int client_fd, const proxy_config_t *config);
+
 int worker_main(int listen_fd, proxy_config_t *config, int cpu_id);
 
 #endif // WORKER_H.
