@@ -23,7 +23,43 @@ int set_nonblocking(int fd) {
 }
 
 int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
-  printf("Worker process (PID: %d) started on CPU %d\n", getpid(), cpu_id);
+  set_cpu_affinity(cpu_id);
+
+  int epoll_fd = epoll_create1(0);
+  if (epoll_fd == -1) {
+    perror("epoll_create1 failed");
+    exit(EXIT_FAILURE);
+  }
+
+  struct epoll_event event;
+  event.events = EPOLLIN;
+  event.data.fd = listen_fd;
+  if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listen_fd, &event) == -1) {
+    perror("epoll_ctl failed");
+    exit(EXIT_FAILURE);
+  }
+
+  struct epoll_event events[MAX_EVENTS];
+  while (1) {
+    int n = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+    for (int i = 0; i < n; i++) {
+      if (events[i].data.fd == listen_fd) {
+        int client_fd = accept(listen_fd, NULL, NULL);
+        if (client_fd == -1) {
+          perror("accept failed");
+          continue;
+        }
+        set_nonblocking(client_fd);
+        event.events = EPOLLIN | EPOLLET;
+        event.data.fd = client_fd;
+        epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &event);
+      } else {
+        handle_client(events[i].data.fd, config);
+      }
+    }
+  }
+
+  close(epoll_fd);
   return 0;
 }
 
