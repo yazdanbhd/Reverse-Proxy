@@ -4,7 +4,27 @@ pid_t workers[NUM_WORKERS];
 int listen_fd_global;
 proxy_config_t config_global;
 
-void handle_sigchld(int sig) { printf("SIGCHLD received. \n"); }
+void handle_sigchld(int sig) {
+  pid_t pid;
+  while ((pid = waitpid(-1, NULL, WNOHANG)) > 0) {
+    printf("Worker with PID %d terminated. Restarting...\n", pid);
+    for (int i = 0; i < NUM_WORKERS; i++) {
+      if (workers[i] == pid) {
+        pid_t new_pid = fork();
+        if (new_pid == 0) {
+          printf("Restarted worker (PID: %d).\n", getpid());
+          // TODO: Worker logic
+          exit(0);
+        } else if (new_pid > 0) {
+          workers[i] = new_pid;
+          printf("Worker restarted with PID %d\n", new_pid);
+        } else {
+          perror("Fork failed while restarting worker");
+        }
+      }
+    }
+  }
+}
 
 int create_listening_socket(const char *ip, int port) {
   int listen_fd;
