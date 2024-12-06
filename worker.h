@@ -1,6 +1,8 @@
 #ifndef WORKER_H
 #define WORKER_H
 
+#define _GNU_SOURCE
+
 #include "collect-logs.h"
 #include "config-proxy.h"
 #include "shared-logging.h"
@@ -19,6 +21,7 @@
 
 #define MAX_EVENTS 1000
 #define BUFFER_SIZE 4096
+#define HOST_HEADER_PREFIX "Host: "
 
 void set_cpu_affinity(int cpu_id);
 
