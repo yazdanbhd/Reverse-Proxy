@@ -111,7 +111,6 @@ void handle_client(int client_fd, const proxy_config_t *config) {
   }
 
   add_log_entry(client_ip, "Valid Request");
-
   char host[256];
   int port = config->outbound_port;
   if (strchr(config->outbound_host, ':')) {
@@ -134,6 +133,7 @@ void handle_client(int client_fd, const proxy_config_t *config) {
     close(client_fd);
     return;
   }
+
   int upstream_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (upstream_fd < 0) {
     perror("Failed to create upstream socket");
@@ -154,6 +154,7 @@ void handle_client(int client_fd, const proxy_config_t *config) {
     return;
   }
   printf("Connected to upstream server at %s:%d\n", host, port);
+
   int bytes_sent = send(upstream_fd, buffer, bytes_read, 0);
   if (bytes_sent <= 0) {
     perror("Failed to send request to upstream server");
@@ -181,6 +182,7 @@ int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
   init_shared_log_buffer();
 
   printf("Worker %d started on CPU %d\n", getpid(), cpu_id);
+
   set_cpu_affinity(cpu_id);
 
   int epoll_fd = epoll_create1(0);
@@ -195,6 +197,7 @@ int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
     perror("epoll_ctl failed");
     exit(EXIT_FAILURE);
   }
+
   struct epoll_event *events = calloc(MAX_EVENTS, sizeof(struct epoll_event));
   if (!events) {
     perror("Failed to allocate memory for epoll events");
@@ -210,6 +213,7 @@ int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
 
     for (int i = 0; i < n; i++) {
       if (events[i].data.fd == listen_fd) {
+
         struct sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);
         int client_fd =
@@ -229,6 +233,7 @@ int worker_main(int listen_fd, proxy_config_t *config, int cpu_id) {
         printf("Accepted new client connection %d\n", client_fd);
 
       } else {
+
         int client_fd = events[i].data.fd;
         handle_client(client_fd, config);
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);

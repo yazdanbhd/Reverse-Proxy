@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 
 #define MAX_HOST_LEN 256
-#define MAX_PORT_LEN 16
+#define MAX_PORT_LEN 256
 
 typedef struct {
   char inbound_ip[INET_ADDRSTRLEN];

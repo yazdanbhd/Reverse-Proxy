@@ -1,7 +1,7 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#define _GNU_SOURCE
+#define _GNU_SOURCE // Must be defined before including sched.h
 
 #include "collect-logs.h"
 #include "config-proxy.h"
@@ -27,6 +27,8 @@ void set_cpu_affinity(int cpu_id);
 
 int set_nonblocking(int fd);
 
+int validate_host_header(const char *buffer, const proxy_config_t *config);
+void send_bad_request(int client_fd);
 void handle_client(int client_fd, const proxy_config_t *config);
 
 int worker_main(int listen_fd, proxy_config_t *config, int cpu_id);

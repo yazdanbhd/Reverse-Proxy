@@ -24,6 +24,7 @@ void parse_arguments(int argc, char *argv[], proxy_config_t *config) {
          -1) {
     switch (c) {
     case 'i': {
+
       char *colon = strchr(optarg, ':');
       if (colon) {
         *colon = '\0';
@@ -31,12 +32,14 @@ void parse_arguments(int argc, char *argv[], proxy_config_t *config) {
         config->inbound_ip[INET_ADDRSTRLEN - 1] = '\0';
         config->inbound_port = atoi(colon + 1);
       } else {
+
         strncpy(config->inbound_ip, optarg, INET_ADDRSTRLEN - 1);
         config->inbound_ip[INET_ADDRSTRLEN - 1] = '\0';
       }
       break;
     }
     case 'o': {
+
       char *colon = strchr(optarg, ':');
       if (colon) {
         *colon = '\0';
@@ -50,7 +53,14 @@ void parse_arguments(int argc, char *argv[], proxy_config_t *config) {
       break;
     }
     default:
+      fprintf(stderr, "Usage: ./proxy-server --inbound 127.0.0.1:3000 "
+                      "--outbound localhost:8080\n");
       exit(EXIT_FAILURE);
     }
+  }
+
+  if (strlen(config->outbound_host) == 0) {
+    fprintf(stderr, "Outbound host is required.\n");
+    exit(EXIT_FAILURE);
   }
 }
