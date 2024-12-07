@@ -1,0 +1,28 @@
+CC = gcc
+CFLAGS = -Wall -O2
+
+all: proxy-server
+
+proxy-server: main.o master.o worker.o config-proxy.o shared-logging.o collect-logs.o
+	$(CC) $(CFLAGS) -o proxy-server main.o master.o worker.o config-proxy.o shared-logging.o collect-logs.o
+
+main.o: main.c master.h config-proxy.h
+	$(CC) $(CFLAGS) -c main.c
+
+master.o: master.c master.h config-proxy.h
+	$(CC) $(CFLAGS) -c master.c
+
+worker.o: worker.c worker.h config-proxy.h shared-logging.h collect-logs.h
+	$(CC) $(CFLAGS) -c worker.c
+
+config-proxy.o: config-proxy.c config-proxy.h
+	$(CC) $(CFLAGS) -c config-proxy.c
+
+shared-logging.o: shared-logging.c shared-logging.h
+	$(CC) $(CFLAGS) -c shared-logging.c
+
+collect-logs.o: collect-logs.c collect-logs.h shared-logging.h
+	$(CC) $(CFLAGS) -c collect-logs.c
+
+clean:
+	rm -f *.o proxy-server
