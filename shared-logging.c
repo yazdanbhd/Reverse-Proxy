@@ -20,12 +20,14 @@ int init_shared_log_buffer() {
     return -1;
   }
 
+  // set the size of the shared memory
   if (ftruncate(shm_fd, sizeof(shared_log_buffer_t)) == -1) {
     perror("ftruncate failed");
     close(shm_fd);
     return -1;
   }
 
+  // map the shared memory
   log_buffer = mmap(NULL, sizeof(shared_log_buffer_t), PROT_READ | PROT_WRITE,
                     MAP_SHARED, shm_fd, 0);
 
@@ -35,13 +37,16 @@ int init_shared_log_buffer() {
     return -1;
   }
 
+  // initialize mutex attributes for process-shared mutex
   pthread_mutexattr_t attr;
   pthread_mutexattr_init(&attr);
   pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 
+  // initialize the mutex
   pthread_mutex_init(&log_buffer->mutex, &attr);
   pthread_mutexattr_destroy(&attr);
 
+  // initialize other buffer properties
   log_buffer->next_write_index = 0;
   log_buffer->total_logs = 0;
 
@@ -57,6 +62,7 @@ void add_log_entry(const char *client_ip, const char *status) {
 
   pthread_mutex_lock(&log_buffer->mutex);
 
+  // add new log
   log_entry_t *entry = &log_buffer->logs[log_buffer->next_write_index];
 
   entry->timestamp = time(NULL);
@@ -66,8 +72,10 @@ void add_log_entry(const char *client_ip, const char *status) {
   entry->status[MAX_STATUS_LEN - 1] = '\0';
   entry->worker_pid = getpid();
 
+  // update with circular buffer
   log_buffer->next_write_index = (log_buffer->next_write_index + 1) % MAX_LOGS;
 
+  // track logs
   if (log_buffer->total_logs < MAX_LOGS) {
     log_buffer->total_logs++;
   }
@@ -83,9 +91,11 @@ int read_logs(log_entry_t *output_logs, int max_logs) {
 
   pthread_mutex_lock(&log_buffer->mutex);
 
+  // determine how many logs to return
   int logs_to_return =
       (log_buffer->total_logs < max_logs) ? log_buffer->total_logs : max_logs;
 
+  // copy logs, starting from the oldest entry
   int start_index =
       (log_buffer->next_write_index - log_buffer->total_logs + MAX_LOGS) %
       MAX_LOGS;
@@ -95,6 +105,7 @@ int read_logs(log_entry_t *output_logs, int max_logs) {
     memcpy(&output_logs[i], &log_buffer->logs[index], sizeof(log_entry_t));
   }
 
+  // reset logs after reading once
   log_buffer->total_logs = 0;
   log_buffer->next_write_index = 0;
 

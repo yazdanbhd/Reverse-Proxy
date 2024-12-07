@@ -2,10 +2,11 @@
 #include <time.h>
 
 char *format_log_entry(const log_entry_t *entry) {
-  char *formatted_entry = malloc(256);
+  char *formatted_entry = malloc(256); // allocate buffer for formatted log
   if (!formatted_entry)
     return NULL;
 
+  // format of logs: <TIMESTAMP> <CLIENT_IP> <PID>
   snprintf(formatted_entry, 256, "%ld %s %d\n", entry->timestamp,
            entry->client_ip, entry->worker_pid);
 
@@ -21,6 +22,7 @@ char *generate_log_collection_response(int *response_length) {
     return strdup("No logs available\n");
   }
 
+  // estimate total buffer size
   size_t total_size = 0;
   char **formatted_logs = malloc(num_logs * sizeof(char *));
   if (!formatted_logs) {
@@ -28,6 +30,7 @@ char *generate_log_collection_response(int *response_length) {
     return NULL;
   }
 
+  // format each log entry
   for (int i = 0; i < num_logs; i++) {
     formatted_logs[i] = format_log_entry(&logs[i]);
     if (formatted_logs[i]) {
@@ -35,8 +38,10 @@ char *generate_log_collection_response(int *response_length) {
     }
   }
 
+  // allocate response buffer
   char *response = malloc(total_size + 1);
   if (!response) {
+    // cleanup
     for (int i = 0; i < num_logs; i++) {
       free(formatted_logs[i]);
     }
@@ -45,6 +50,7 @@ char *generate_log_collection_response(int *response_length) {
     return NULL;
   }
 
+  // concatenate log entries
   response[0] = '\0';
   for (int i = 0; i < num_logs; i++) {
     if (formatted_logs[i]) {

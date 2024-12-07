@@ -13,6 +13,7 @@ typedef struct {
   u_int16_t outbound_port;
 } proxy_config_t;
 
+// function to parse aruguments of reverse proxy config interface
 void parse_arguments(int argc, char *argv[], proxy_config_t *config);
 
 #endif // CONFIG_PROXY_H

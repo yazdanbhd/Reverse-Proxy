@@ -19,10 +19,13 @@ extern int current_worker;
 extern int listen_fd_global;
 extern proxy_config_t config_global;
 
+// function to handle terminated worker processes and restarts them
 void handle_sigchld(int sig);
 
+// function to create and binds a listening socket
 int create_listening_socket(const char *ip, int port);
 
+// function to fork worker processes to handle client requests
 void fork_workers();
 
 #endif // MASTER_H

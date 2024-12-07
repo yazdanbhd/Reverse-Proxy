@@ -73,7 +73,7 @@ void fork_workers() {
   for (int i = 0; i < NUM_WORKERS; i++) {
     pid_t pid = fork();
     if (pid == 0) {
-
+      // worker process
       worker_main(listen_fd_global, &config_global, i);
       exit(0);
     } else if (pid > 0) {

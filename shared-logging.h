@@ -25,9 +25,13 @@ typedef struct {
   pthread_mutex_t mutex;
 } shared_log_buffer_t;
 
+// function for initialize shared log buffer
 int init_shared_log_buffer();
 
+// function for add single log entry
 void add_log_entry(const char *client_ip, const char *status);
+
+// function for handling reading logs
 int read_logs(log_entry_t *output_logs, int max_logs);
 
 #endif // SHARED_LOGGING_H
