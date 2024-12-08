@@ -3,7 +3,7 @@
 ## Introduction
 
 
-This document is about my **Proxy Server** project. It is a reverse proxy written in the C . A reverse proxy is a server that takes requests from clients, sends them to another server (called an upstream server), and then sends the response back to the clients. This project also keeps logs of all the requests to help monitor and debug the server.
+This document is about **Proxy Server** project. It is a reverse proxy written in the C . A reverse proxy is a server that takes requests from clients, sends them to another server (called an upstream server), and then sends the response back to the clients. This project also keeps logs of all the requests to help monitor and debug the server.
 
 ## Features
 
