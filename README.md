@@ -348,5 +348,3 @@ To remove all the compiled files and the executable, use the `clean` target in t
     - `$(OBJ_DIR)/%.o`: Compiles each `.c` file into an `.o` file.
     - `clean`: Removes all compiled object files and the executable.
     - `test`: Compiles and runs unit tests.
-
-**note:** I wanted to use `Doxygen` for making a powerful documentation but i couldnt do that because of the lack of time, so if there is any chance, i can bring doxygen document in 1 or 2 extra days.
