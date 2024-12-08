@@ -1,7 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include "config-proxy.h"
-#include "master.h"
+#include "../include/config-proxy.h"
+#include "../include/master.h"
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>

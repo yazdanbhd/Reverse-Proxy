@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#include "shared-logging.h"
+#include "../include/shared-logging.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>

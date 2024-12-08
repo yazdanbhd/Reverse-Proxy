@@ -1,4 +1,4 @@
-#include "worker.h"
+#include "../include/worker.h"
 
 void set_cpu_affinity(int cpu_id) {
   cpu_set_t set;

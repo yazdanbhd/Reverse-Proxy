@@ -1,7 +1,7 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#define _GNU_SOURCE // Must be defined before including sched.h
+#define _GNU_SOURCE
 
 #include "collect-logs.h"
 #include "config-proxy.h"
@@ -10,13 +10,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
-#include <sched.h> // For CPU affinity functions and macros
+#include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>
-#include <time.h> // For time-related functions
+#include <time.h>
 #include <unistd.h>
 
 #define MAX_EVENTS 1000

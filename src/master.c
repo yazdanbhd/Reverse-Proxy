@@ -1,4 +1,4 @@
-#include "master.h"
+#include "../include/master.h"
 
 pid_t workers[NUM_WORKERS];
 int current_worker = 0;

@@ -1,4 +1,4 @@
-#include "collect-logs.h"
+#include "../include/collect-logs.h"
 #include <time.h>
 
 char *format_log_entry(const log_entry_t *entry) {
