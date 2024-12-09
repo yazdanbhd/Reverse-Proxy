@@ -348,3 +348,20 @@ To remove all the compiled files and the executable, use the `clean` target in t
     - `$(OBJ_DIR)/%.o`: Compiles each `.c` file into an `.o` file.
     - `clean`: Removes all compiled object files and the executable.
     - `test`: Compiles and runs unit tests.
+
+
+### Contributing
+
+- *what i need help with*
+	- using eBPF for packet filtering 
+
+- *Guidelines*
+	- Use meaningful commit messages.
+	- Follow the existing code style. (currently using clang-format for code formatting)
+	- Add comments and documentation for new features.
+
+- *Submitting Changes*
+	1. Fork the repository.
+	2. Create a new branch for your work.
+	3. Open a pull request and describe your changes.
+
